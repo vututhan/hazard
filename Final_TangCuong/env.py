@@ -23,7 +23,6 @@ class RandomHazardEnv(gym.Env):
         super().reset(seed=seed)
         self.agent_pos = list(self.start_pos)
         
-        # Khởi tạo vị trí Hazard
         if self.num_hazards == 1:
             self.hazards_pos = [[self.grid_size - 1, 0]]
         else:
@@ -35,7 +34,7 @@ class RandomHazardEnv(gym.Env):
         return self._get_state(), {}
 
     def _get_state(self):
-        # Trạng thái Markov đầy đủ bao gồm Agent, Hazard, và trạng thái Smoke Bomb
+        
         state = [self.agent_pos[0], self.agent_pos[1]]
         for h in self.hazards_pos:
             state.extend([h[0], h[1]])
@@ -55,11 +54,9 @@ class RandomHazardEnv(gym.Env):
     def _move_hazard(self, h_pos):
         valid_moves = self._get_valid_moves(h_pos)
         
-        # Nếu Smoke bomb đang hoạt động hoặc hazard_type="random" -> Random Walk thuần
         if self.smoke_timer > 0 or self.hazard_type == "random":
             probs = [1.0 / len(valid_moves)] * len(valid_moves)
         elif self.hazard_type == "chasing":
-            # Chasing mode: Hazard ưu tiên đuổi gần Agent
             dists = [abs(m[0] - self.agent_pos[0]) + abs(m[1] - self.agent_pos[1]) for m in valid_moves]
             min_dist = min(dists)
             
